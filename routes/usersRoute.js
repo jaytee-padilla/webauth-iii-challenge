@@ -1,5 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // setup route
 const router = express.Router();
@@ -18,6 +19,28 @@ router.get('/users', (req, res) => {
 		.catch(error => {
 			res.status(400).json({message: 'Unable to retrieve users from database'});
 		})
+});
+
+// get JSON web token
+router.get('/token', (req, res) => {
+	// add you name to the token's payload
+	const payload = {
+		// subject is usually the user's id (who/what the token describes)
+		subject: "me", // translates into the "sub" property on the token
+		me: "Jaytee"
+	};
+
+	const secret = "this is a secret";
+
+	const options = {
+		expiresIn: "8h"
+	}
+
+	// use jsonwebtoken to produce a token
+	const token = jwt.sign(payload, secret, options);
+
+	// return the token to the client
+	res.status(200).json(token);
 });
 
 // POST
